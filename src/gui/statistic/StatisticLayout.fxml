@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="555.0" prefWidth="766.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.statistic.StatisticLayout">
+   <children>
+         <AnchorPane fx:id="topBar" prefHeight="123.0" prefWidth="766.0" style="-fx-background-color: #001970;">
+         <children>
+            <ImageView fitHeight="72.0" fitWidth="73.0" layoutX="32.0" layoutY="30.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../Resource/Images/icons8_Male_User_96px.png" />
+               </image>
+            </ImageView>
+            <Text fill="#bcafaf" layoutX="167.0" layoutY="79.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Số từ đã học được " wrappingWidth="177.826171875">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Text>
+            <Text fill="#bcafaf" layoutX="479.0" layoutY="36.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Số ngày hoàn thành mục tiêu" wrappingWidth="206.826171875">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Text>
+            <Text fill="#bcafaf" layoutX="479.0" layoutY="78.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Tổng Điểm" wrappingWidth="177.826171875">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Text>
+            <Text fill="WHITE" layoutX="188.0" layoutY="51.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Nguyễn Văn A" wrappingWidth="177.826171875">
+               <font>
+                  <Font name="System Bold" size="15.0" />
+               </font>
+            </Text>
+            <Text fill="WHITE" layoutX="188.0" layoutY="100.0" strokeType="OUTSIDE" strokeWidth="0.0" text="14" wrappingWidth="72.000015437603">
+               <font>
+                  <Font name="System Bold" size="15.0" />
+               </font>
+            </Text>
+            <Text fill="WHITE" layoutX="508.0" layoutY="55.0" strokeType="OUTSIDE" strokeWidth="0.0" text="14" wrappingWidth="72.000015437603">
+               <font>
+                  <Font name="System Bold" size="15.0" />
+               </font>
+            </Text>
+            <Text fill="WHITE" layoutX="509.0" layoutY="96.0" strokeType="OUTSIDE" strokeWidth="0.0" text="14" wrappingWidth="72.000015437603">
+               <font>
+                  <Font name="System Bold" size="15.0" />
+               </font>
+            </Text>
+            <Text fill="#bcafaf" layoutX="164.0" layoutY="35.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Tên" wrappingWidth="177.826171875">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Text>
+         </children>
+      </AnchorPane>
+      <LineChart fx:id="lineChart" layoutX="14.0" layoutY="177.0" prefHeight="316.0" prefWidth="341.0">
+        <xAxis>
+          <CategoryAxis side="BOTTOM" />
+        </xAxis>
+        <yAxis>
+          <NumberAxis side="LEFT" />
+        </yAxis>
+      </LineChart>
+      <AnchorPane fx:id="achivement" layoutX="395.0" layoutY="189.0" prefHeight="281.0" prefWidth="341.0" style="-fx-background-color: #fff9c4; -fx-border-color: #0000; -fx-border-radius: 22; -fx-border-radius: 22;">
+         <children>
+            <Text layoutX="81.0" layoutY="29.0" strokeType="OUTSIDE" strokeWidth="0.0" text="THÀNH TÍCH ĐÃ ĐẠT ĐƯỢC" wrappingWidth="257.826171875">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Text>
+         </children>
+      </AnchorPane>
+      <Line endX="100.0" layoutX="372.0" layoutY="342.0" rotate="90.0" startX="-100.0" />
+      <Text layoutX="185.0" layoutY="169.0" strokeType="OUTSIDE" strokeWidth="0.0" text="THỐNG KÊ QUÁ TRÌNH HỌC" wrappingWidth="469.00000613182783">
+         <font>
+            <Font name="System Bold" size="27.0" />
+         </font>
+      </Text>
+   </children>
+</AnchorPane>

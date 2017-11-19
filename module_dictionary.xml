@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_dictionary" default="compile.module.dictionary">
+  <dirname property="module.dictionary.basedir" file="${ant.file.module_dictionary}"/>
+  
+  <property name="module.jdk.home.dictionary" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.dictionary" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.dictionary" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.dictionary" value="-encoding UTF-8 -source 8 -target 8 ${compiler.args}"/>
+  
+  <property name="dictionary.output.dir" value="${module.dictionary.basedir}/out/production/Dictionary"/>
+  <property name="dictionary.testoutput.dir" value="${module.dictionary.basedir}/out/test/Dictionary"/>
+  
+  <path id="dictionary.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="dictionary.module.production.classpath">
+    <path refid="${module.jdk.classpath.dictionary}"/>
+    <path refid="library.sqlite-jdbc-3.20.0.classpath"/>
+    <pathelement location="${basedir}/libs/sqlite-jdbc-3.20.0.jar"/>
+    <path refid="library.jfoenix-0.0.0-snapshot.classpath"/>
+  </path>
+  
+  <path id="dictionary.runtime.production.module.classpath">
+    <pathelement location="${dictionary.output.dir}"/>
+    <path refid="library.sqlite-jdbc-3.20.0.classpath"/>
+    <pathelement location="${basedir}/libs/sqlite-jdbc-3.20.0.jar"/>
+    <path refid="library.jfoenix-0.0.0-snapshot.classpath"/>
+  </path>
+  
+  <path id="dictionary.module.classpath">
+    <path refid="${module.jdk.classpath.dictionary}"/>
+    <pathelement location="${dictionary.output.dir}"/>
+    <path refid="library.sqlite-jdbc-3.20.0.classpath"/>
+    <pathelement location="${basedir}/libs/sqlite-jdbc-3.20.0.jar"/>
+    <path refid="library.jfoenix-0.0.0-snapshot.classpath"/>
+  </path>
+  
+  <path id="dictionary.runtime.module.classpath">
+    <pathelement location="${dictionary.testoutput.dir}"/>
+    <pathelement location="${dictionary.output.dir}"/>
+    <path refid="library.sqlite-jdbc-3.20.0.classpath"/>
+    <pathelement location="${basedir}/libs/sqlite-jdbc-3.20.0.jar"/>
+    <path refid="library.jfoenix-0.0.0-snapshot.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.dictionary">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.dictionary">
+    <patternset refid="excluded.from.module.dictionary"/>
+  </patternset>
+  
+  <path id="dictionary.module.sourcepath">
+    <dirset dir="${module.dictionary.basedir}">
+      <include name="src"/>
+      <include name="libs"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.dictionary" depends="compile.module.dictionary.production,compile.module.dictionary.tests" description="Compile module Dictionary"/>
+  
+  <target name="compile.module.dictionary.production" depends="register.custom.compilers" description="Compile module Dictionary; production classes">
+    <mkdir dir="${dictionary.output.dir}"/>
+    <javac2 destdir="${dictionary.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.dictionary}/javac">
+      <compilerarg line="${compiler.args.dictionary}"/>
+      <bootclasspath refid="dictionary.module.bootclasspath"/>
+      <classpath refid="dictionary.module.production.classpath"/>
+      <src refid="dictionary.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.dictionary"/>
+    </javac2>
+    
+    <copy todir="${dictionary.output.dir}">
+      <fileset dir="${module.dictionary.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+      <fileset dir="${module.dictionary.basedir}/libs">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.dictionary.tests" depends="register.custom.compilers,compile.module.dictionary.production" description="compile module Dictionary; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.dictionary" description="cleanup module">
+    <delete dir="${dictionary.output.dir}"/>
+    <delete dir="${dictionary.testoutput.dir}"/>
+  </target>
+</project>

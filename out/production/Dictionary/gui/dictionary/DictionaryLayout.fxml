@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXTextField?>
+<?import com.jfoenix.controls.JFXTreeTableView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane fx:id="main" prefHeight="365.0" prefWidth="610.0" style="-fx-background-color: #c1d5e0; -fx-background-radius: 5 5 5 5;" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.dictionary.DictionaryLayout">
+   <children>
+      <ImageView fx:id="close" fitHeight="30.0" fitWidth="32.0" layoutX="574.0" layoutY="4.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../Resource/Images/icons8_Delete_64px_1.png" />
+         </image>
+      </ImageView>
+      <JFXTreeTableView fx:id="treeView" layoutX="29.0" layoutY="64.0" prefHeight="276.0" prefWidth="552.0" stylesheets="@../css/table.css" />
+      <JFXTextField fx:id="searchInput" focusColor="#405aa800" layoutX="14.0" layoutY="15.0" prefHeight="26.0" prefWidth="254.0" promptText="Search" />
+   </children>
+</AnchorPane>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXTabPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.effect.ColorAdjust?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane fx:id="background" prefHeight="552.0" prefWidth="781.0" style="-fx-background-color: ede7f6;" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.MenuBarController">
+   <children>
+      <JFXTabPane fx:id="tabPane" prefHeight="552.0" prefWidth="781.0" rotateGraphic="true" side="LEFT" style="-jfx-background-color: 77c700;" tabClosingPolicy="UNAVAILABLE">
+         <tabs>
+            <Tab fx:id="learningTab" text="" />
+            <Tab fx:id="statisticTab" text="" />
+            <Tab fx:id="dictionaryTab" text="" />
+         </tabs>
+         <effect>
+            <ColorAdjust />
+         </effect>
+      </JFXTabPane>
+   </children>
+</AnchorPane>

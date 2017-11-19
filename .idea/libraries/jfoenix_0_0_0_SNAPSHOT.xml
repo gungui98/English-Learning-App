@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="jfoenix-0.0.0-SNAPSHOT">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/libs/jfoenix-0.0.0-SNAPSHOT.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$PROJECT_DIR$/libs/jfoenix-0.0.0-SNAPSHOT-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/libs/jfoenix-0.0.0-SNAPSHOT-javadoc.jar!/" />
+    </SOURCES>
+  </library>
+</component>
