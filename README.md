@@ -23,9 +23,9 @@ Intellij:
 Run class Main
 
 
-## Meta
+## Contact
 
-Your Name – [Gungui98](https://facebooks.com/gungui98) –gunguiuet@gmail.com
+Nguyễn Văn Phi – [Gungui98](https://facebooks.com/gungui98) –gunguiuet@gmail.com
 
 Distributed under the MIT license.
 
