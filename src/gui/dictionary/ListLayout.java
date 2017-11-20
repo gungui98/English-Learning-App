@@ -4,25 +4,21 @@ import com.jfoenix.controls.*;
 import com.jfoenix.controls.JFXButton.ButtonType;
 import com.jfoenix.effects.JFXDepthManager;
 import com.loader.word.WordManager;
+import com.loader.word.WordManager.Topic;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextField;
-import javafx.scene.effect.Effect;
-import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
@@ -33,28 +29,24 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Method;
-import java.net.URL;
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import static javafx.animation.Interpolator.EASE_BOTH;
 
-public class ListLayout implements Initializable{
-    private ArrayList<String> selectedTopic;
-    private ArrayList<Node> children;
+public class ListLayout extends Application{
+    private ArrayList<Topic> currentTopic;
+    private ArrayList<Topic> selectedTopic;
     private ArrayList<Node> selectedChild;
     @FXML
-    private  AnchorPane mask;
+    private  AnchorPane root;
 
     @FXML
     private StackPane stackPane;
@@ -166,7 +158,7 @@ public class ListLayout implements Initializable{
             return header.getBoundsInParent().getHeight() - button.getHeight() / 2;
         }, header.boundsInParentProperty(), button.heightProperty()));
         button.setOnMouseClicked(event -> {
-            loadEditor(topic.getName());
+            loadEditor(topic);
         });
 
 
@@ -194,13 +186,13 @@ public class ListLayout implements Initializable{
                 deleteButton.setDisable(false);
                 exportButton.setDisable(false);
 
-                selectedTopic.add(text.getText());
+                selectedTopic.add(topic);
                 selectedChild.add(child);
                 if(selectedTopic.size()==2)
                     mergeButton.setDisable(false);
             }
             else {
-                selectedTopic.remove(text.getText());
+                selectedTopic.remove(topic);
                 if(selectedTopic.size()<2){
                     mergeButton.setDisable(true);
                 }
@@ -219,24 +211,25 @@ public class ListLayout implements Initializable{
         return child;
     }
     private void loadTopic(){
-        children = new ArrayList<>();
-        for (WordManager.Topic i:WordManager.getTopics()) {
-            children.add(buildPane(i));
+        for (Topic i:WordManager.getTopics()) {
+            if(!currentTopic.contains(i)) {
+                masonryPane.getChildren().add(buildPane(i));
+                currentTopic.add(i);
+            }
         }
+        stackPane.requestLayout();
     }
     private void deleteTopic(){
         int count=0;
-        for(String i:selectedTopic){
-            WordManager.deleteTopic(i);
+        for(Topic i:selectedTopic){
+            WordManager.deleteTopic(i.getName());
             masonryPane.getChildren().remove(selectedChild.get(count++));
             Platform.runLater(() -> scrollPane.requestLayout());
+            currentTopic.remove(i);
         }
-        try {
-            WordManager.reload();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
+        selectedChild = new ArrayList<>();
+        selectedTopic = new ArrayList<>();
+        initButton();
     }
 
     private ImageView loadImage(String option,int size){
@@ -250,10 +243,13 @@ public class ListLayout implements Initializable{
     private void initButton(){
 
         loadButtun.setGraphic(loadImage("import",25));
+        loadButtun.setOnMouseClicked(event -> loadFile());
+
         mergeButton.setGraphic(loadImage("merge",25));
 
         exportButton.setGraphic(loadImage("export",25));
         exportButton.setDisable(true);
+        exportButton.setOnMouseClicked(event -> saveFile());
 
         deleteButton.setGraphic(loadImage("delete",25));
         deleteButton.setOnMouseClicked((event -> confirmDialog("delete")));
@@ -286,30 +282,51 @@ public class ListLayout implements Initializable{
         content.setActions(confirm);
         dialog.show();
     }
-    private void loadEditor(String currentTopic) {
-
+    private void loadEditor(WordManager.Topic currentTopic) {
+        DictionaryLayout.setTopic(currentTopic);
        Parent root = null;
         try {
             root = FXMLLoader.load(getClass().getResource("DictionaryLayout.fxml"));
             Stage stage = new Stage(StageStyle.TRANSPARENT);
             Scene scene = new Scene(root);
-            DictionaryLayout.setTopic(currentTopic);
             stage.setScene(scene);
             stage.show();
-            DictionaryLayout.setTopic(currentTopic);
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+
     }
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
+    private void loadFile(){
+        FileChooser chooser = new FileChooser();
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("CSV files (*.csv)","*.csv");
+        chooser.getExtensionFilters().add(extFilter);
+        File file =chooser.showOpenDialog(masonryPane.getScene().getWindow());
+        if(file!=null)
+           WordManager.loadFile(file);
+        loadTopic();
+    }
+    private void saveFile(){
+        FileChooser chooser = new FileChooser();
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("CSV files (*.csv)","*.csv");
+        chooser.getExtensionFilters().add(extFilter);
+        File file =chooser.showSaveDialog(masonryPane.getScene().getWindow());
+        if(file!=null)
+            WordManager.saveFile(file,selectedTopic);
+    }
+    public void initialize() {
+        currentTopic = new ArrayList<>();
         stackPane.setVisible(false);
         initButton();
         loadTopic();
         selectedChild = new ArrayList<>();
         selectedTopic = new ArrayList<>();
-        masonryPane.getChildren().addAll(children);
         Platform.runLater(() -> scrollPane.requestLayout());
         JFXScrollPane.smoothScrolling(scrollPane);
+    }
+
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        initialize();
     }
 }

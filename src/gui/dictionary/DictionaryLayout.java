@@ -1,91 +1,150 @@
 package gui.dictionary;
 
 import com.jfoenix.controls.*;
-import com.jfoenix.effects.JFXDepthManager;
 import com.loader.word.WordManager;
-import com.loader.word.WordManager.Word;
-
-import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.TreeItem;
+import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
+import com.loader.word.WordManager.Word;
+
 import java.net.URL;
-
-
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 
 public class DictionaryLayout implements Initializable {
-    private static String Topic;
-
+    private static WordManager.Topic Topic;
+    private static ArrayList<Label> labels;
+    @FXML
+    private StackPane stackPane;
     @FXML
     private AnchorPane main;
 
     @FXML
-    private JFXTreeTableView<Word> treeView;
-
-    @FXML
-    private JFXTextField searchInput;
+    private JFXListView<Label> wordList;
 
     @FXML
     private ImageView close;
 
-    private JFXDepthManager jfxDepthManager;
+    @FXML
+    private ImageView wordImage;
+    @FXML
+    private JFXButton addButton;
+
+    @FXML
+    private JFXButton deleteButton;
+
+    @FXML
+    private JFXButton saveButton;
+
+    @FXML
+    private Text eng;
+
+    @FXML
+    private JFXTextField vi;
+
+    @FXML
+    private JFXTextField decrip;
+
+
+    @Override
+    public void initialize(URL url, ResourceBundle rb) {
+        stackPane.setVisible(false);
+        labels = new ArrayList<>();
+
+        initContent(null,null,null);
+       for(Word word:Topic.getWords()) {
+           Label label = new Label(word.getEnglish());
+           labels.add(label);
+           wordList.setOnMouseClicked(event -> {
+               int index = wordList.getSelectionModel().getSelectedIndex();
+               Word currentSelectedWord = Topic.getWords().get(index);
+               initContent(currentSelectedWord.getEnglish(),currentSelectedWord.getVietnamese(),currentSelectedWord.getNote());
+           });
+
+       }
+       wordList.getItems().addAll(labels);
+       close.setOnMouseClicked(event -> close());
+    }
+    private void deleteWord(){
+        Topic.getWords().remove(new Word(eng.getText(), vi.getText(), decrip.getText()));
+        wordList.getItems().remove(wordList.getSelectionModel().getSelectedItem());
+        wordList.setShowTooltip(true);
+
+        WordManager.deleteWord(eng.getText(),Topic.getName());
+
+            WordManager.reload();
+
+    }
+    private void update(){
+        Word word = Topic.getWords().get(wordList.getSelectionModel().getSelectedIndex());
+        word.setVietnamese(vi.getText());
+        word.setNote(decrip.getText());
+        WordManager.updateWord(eng.getText(),vi.getText(),Topic.getName(),decrip.getText());
+    }
+    private void initContent(String english,String vietnamese,String decription){
+        //init button
+        saveButton.setDisable(true);
+        deleteButton.setOnMouseClicked(event -> confirmDialog("delete"));
+        saveButton.setOnMouseClicked(event -> update());
+        //init Text
+        eng.setText(english);
+        eng.setTextAlignment(TextAlignment.CENTER);
+
+        vi.setText(vietnamese);
+        vi.setOnAction(event -> {
+            saveButton.setDisable(false);
+        });
+
+        decrip.setText(decription);
+        decrip.setOnAction(event -> {
+            saveButton.setDisable(false);
+        });
+
+    }
+
+    public static void setTopic(WordManager.Topic topic) {
+        Topic = topic;
+    }
 
     private void close(){
         ((Stage) main.getScene().getWindow()).close();
     }
-    @Override
-    public void initialize(URL url, ResourceBundle rb) {
+    private void confirmDialog(String option){
+        stackPane.setVisible(true);
+        JFXDialogLayout content = new JFXDialogLayout();
+
+        Text title = new Text("CHÚ Ý");
+        Text body = new Text("Hành động này không thể hoàn tác,bạn có muốn tiếp tục không?");
+        title.setFont(Font.font("System", FontWeight.BOLD, 18));
+        body.setFont(Font.font("System", FontWeight.BOLD, 14));
 
 
-        JFXTreeTableColumn<Word, String> deptName = new JFXTreeTableColumn<>("English");
-        deptName.setPrefWidth(200);
-        deptName.setCellValueFactory(param -> param.getValue().getValue().English);
-        treeView.editableProperty().setValue(true);
+        content.setHeading(title);
+        content.setBody(body);
+        JFXDialog dialog = new JFXDialog(stackPane,content,JFXDialog.DialogTransition.CENTER);
+        JFXButton confirm = new JFXButton("Xác Nhận");
+        confirm.setStyle("-fx-font-weight: bold");
 
-        JFXTreeTableColumn<Word, String> ageCol = new JFXTreeTableColumn<>("Vietnamese");
-        ageCol.setPrefWidth(150);
-        ageCol.setCellValueFactory(param -> param.getValue().getValue().Vietnamese);
-
-        JFXTreeTableColumn<Word, String> nameCol = new JFXTreeTableColumn<>("Note");
-        nameCol.setPrefWidth(250);
-        nameCol.setCellValueFactory(param -> param.getValue().getValue().Note);
-
-        jfxDepthManager.setDepth(treeView,2);
-
-        ObservableList<Word> words = FXCollections.observableArrayList();
-/*
-        try {
-            for(Word i: WordManager.getAllWords())
-            words.add(i);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }*/
-
-
-        final TreeItem<Word> root = new RecursiveTreeItem<Word>(words, RecursiveTreeObject::getChildren);
-        treeView.getColumns().setAll(deptName, ageCol, nameCol);
-        treeView.setRoot(root);
-        treeView.setShowRoot(false);
-        searchInput.textProperty().addListener((observable, oldValue, newValue) -> treeView.setPredicate(userTreeItem -> {
-            Boolean flag = userTreeItem.getValue().English.getValue().contains(newValue);
-            Boolean flag2 = userTreeItem.getValue().Note.getValue().contains(newValue);
-            return flag||userTreeItem.getValue().Vietnamese.getValue().contains(newValue)||flag2;
-        }));
-
-        close.setOnMouseClicked(event -> close());
+        confirm.setOnMouseClicked(event -> {
+            if(option.equals("delete"))
+                deleteWord();
+            dialog.close();
+        });
+        dialog.setOnDialogClosed(event -> {
+            stackPane.setVisible(false);
+        });
+        content.setActions(confirm);
+        dialog.show();
     }
-    public static void setTopic(String topic) {
-        Topic = topic;
-    }
-
 }
 

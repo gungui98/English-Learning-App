@@ -29,6 +29,10 @@ public class UserManager {
     public static void insertNewRecord(int reviewedScore,int newWordScore){
         db.ImportNewRecord(reviewedScore,newWordScore);
     }
+
+    /**
+     * user's record
+     */
     public class UserRecord{
         public java.sql.Date date;
         public int Reviewed;
@@ -41,7 +45,7 @@ public class UserManager {
         }
 
         public String getDate() {
-            return date.toString();
+            return Integer.toString(date.getDate())+"/"+Integer.toString(date.getMonth());
         }
 
         public int getReviewed() {
@@ -52,6 +56,12 @@ public class UserManager {
             return NewWord;
         }
     }
+
+    /**
+     * test
+     * @param args
+     * @throws SQLException
+     */
     public static void main(String[] args) throws SQLException {
         UserManager userManager = new UserManager();
         userManager.insertNewRecord(99,99);

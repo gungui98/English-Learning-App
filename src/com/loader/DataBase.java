@@ -19,12 +19,13 @@ public class DataBase {
         try {
             Class.forName(CLASS_NAME);
             connection = DriverManager.getConnection(URL);
-
             statement = connection.createStatement();
+
         } catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
             System.exit(0);
         }
+
     }
     /**
      * Simple helper function
@@ -52,6 +53,7 @@ public class DataBase {
         }
         try{
            statement.executeUpdate(sql);
+
         } catch (Exception e){
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
             System.exit(0);
