@@ -1,84 +1,122 @@
 package com.loader.word;
 
 import java.io.File;
-import java.sql.Array;
-import java.sql.SQLException;
 import java.util.ArrayList;
 
 /**
  * Created by GUNGUI on 10/13/2017.
  */
 public class WordManager {
-
+    private static final String IMAGE_DIR = "..\\..\\Resource\\WordPicture\\";
+    private static WordManager wordManager = new WordManager();
+    private static ArrayList<Word> todayWords;
     private static ArrayList<Topic> topics;
     private static DatabaseHelper db;
-    public WordManager() throws SQLException {
+    private static int index;
+
+    private WordManager() {
         db = new DatabaseHelper();
+        todayWords = getTodayWords();
         topics = new ArrayList<>();
         ArrayList<Word> words;
         ArrayList<String> nameOfTopics = db.getAllTopic();
 
-        for(String i : nameOfTopics){
+        for (String i : nameOfTopics) {
             words = new ArrayList<>();
-            for(String word:db.getWordByTopic(i)){
+            for (String word : db.getWordByTopic(i)) {
                 words.add(new Word(word, db.getViMeaning(word), db.getDecription(word)));
             }
-            topics.add(new Topic(words,i));
+            topics.add(new Topic(words, i));
         }
+
     }
-    public static void reload()  {
-        try {
-            new WordManager();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
+
     public static ArrayList<Topic> getTopics() {
         return topics;
 
     }
 
-    public static void deleteTopic(String topicName){
+    public static void deleteTopic(String topicName) {
         db.deleteTopic(topicName);
         WordManager.reload();
     }
-    public static String getImage(String word){
-        return db.getImage(word);
-    }
-    public static void increasePriority(String word){
+    public static void increasePriority(String word) {
         db.increasePriority(word);
     }
-    public static void decresePriority(String word){
+
+    public static void decresePriority(String word) {
         db.decreasePriority(word);
     }
-    public static ArrayList<Word> getWordByNumber(int number){
-            return null;
-    }
-    public static void deleteWord(String word,String topic){
-        db.deleteWord(word,topic);
+
+    public static void deleteWord(String word, String topic) {
+        db.deleteWord(word, topic);
         reload();
     }
-    public static void updateWord(String word,String meaning,String topic,String note){db.updateWord(word,meaning,topic,note);}
-    public static void loadFile(File file){db.loadRecord(file);
-    reload();
+    public static String getImageDir(String word){
+        return IMAGE_DIR+db.getImage(word);
+    }
+    public static void updateWord(String word, String meaning, String topic, String note) {
+        db.updateWord(word, meaning, topic, note);
     }
 
-    public static void saveFile(File file,ArrayList<Topic> topics) {
-        try {
-            ArrayList<String> nameOfTopics = new ArrayList<>();
-            for(Topic topic:topics){
-                nameOfTopics.add(topic.getName());
-            }
-            db.writeRecord(file,nameOfTopics);
-        } catch (SQLException e) {
-            e.printStackTrace();
+    public static void loadFile(File file) {
+        db.loadRecord(file);
+        reload();
+    }
+
+    public static void saveFile(File file, ArrayList<Topic> topics) {
+        ArrayList<String> nameOfTopics = new ArrayList<>();
+        for (Topic topic : topics) {
+            nameOfTopics.add(topic.getName());
         }
+        db.writeRecord(file, nameOfTopics);
         reload();
     }
+    public static Word nextWords(){
+        return todayWords.get(index++);
+    }
+    private static void reload() {
+        new WordManager();
+    }
 
-    public static class  Word  {
+    public static ArrayList<Word> getTodayWords() {
+        if (todayWords != null) {
+            return todayWords;
+        } else {
+            index =0;
+            todayWords = new ArrayList<>();
+            int numOfWords = 10;
+            if (db.getWordsByPriority(3, numOfWords-1) != null) {
+                for (String i : db.getWordsByPriority(3, numOfWords-1)) {
+                    todayWords.add(new Word(i, db.getViMeaning(i), db.getDecription(i)));
+                }
+            }
+            if (db.getWordsByPriority(2, numOfWords-2) != null) {
+                for (String i : db.getWordsByPriority(2, numOfWords-2)) {
+                    todayWords.add(new Word(i, db.getViMeaning(i), db.getDecription(i)));
+                }
+            }
+            if (db.getWordsByPriority(1, numOfWords-3) != null) {
+                for (String i : db.getWordsByPriority(1, numOfWords-3)) {
+                    todayWords.add(new Word(i, db.getViMeaning(i), db.getDecription(i)));
+                }
+            }
+            if (db.getWordsByPriority(0, numOfWords) != null) {
+                for (String i : db.getWordsByPriority(0, numOfWords)) {
+                    todayWords.add(new Word(i, db.getViMeaning(i), db.getDecription(i)));
+                }
+            }
+            return todayWords;
+        }
+    }
 
-        private     String Note;
+    public static ArrayList<String> getWrongAnswer(int i,String except) {
+        return db.getRandomWords(i,except);
+    }
+
+    public static class Word {
+
+        private String Note;
         private String Vietnamese;
         private String English;
 
@@ -120,7 +158,8 @@ public class WordManager {
             return English != null ? English.equals(word.English) : word.English == null;
         }
     }
-    public class Topic{
+
+    public class Topic {
         private ArrayList<Word> words;
         private String name;
 
@@ -148,4 +187,5 @@ public class WordManager {
         }
 
     }
+
 }

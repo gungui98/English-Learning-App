@@ -21,41 +21,57 @@ public class DatabaseHelper extends DataBase {
      * @throws SQLException throw exception if any error when face any error in query step
      */
 
-    public ArrayList<String> getAllWords() throws SQLException {
+    public ArrayList<String> getAllWords(){
         ArrayList<String> allWords = new ArrayList<>();
         String sql = "SELECT Word FROM Dictionary";
         ResultSet resultSet = super.query(sql);
-        while (resultSet.next()){
-            allWords.add(resultSet.getString("Word"));
+        try {
+            while (resultSet.next()){
+                allWords.add(resultSet.getString("Word"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return allWords;
     }
-    public ArrayList<String> getAllTopic() throws SQLException {
+    public ArrayList<String> getAllTopic() {
         ArrayList<String> topic = new ArrayList<>();
         String sql = "SELECT DISTINCT Topic FROM Dictionary";
         ResultSet resultSet = super.query(sql);
-        while(resultSet.next()){
-            topic.add(resultSet.getString("Topic"));
+        try {
+            while(resultSet.next()){
+                topic.add(resultSet.getString("Topic"));
+            }
+            resultSet.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return topic;
     }
     /**
      * Get n elements per slot (priority) from Database
      *
-     * @param numOfwords number of words need to get
+     * @param
      * @return an array of words
      */
 
-    public ArrayList<String> getWordsByPriority(int priority,int numOfWords) throws SQLException {
+    public ArrayList<String> getWordsByPriority(int priority,int numOfWords) {
         ArrayList<String> words = new ArrayList<>();
         String sql="SELECT Word FROM Dictionary WHERE Priority ="+priority+" LIMIT "+numOfWords;
         ResultSet resultSet = super.query(sql);
+        try {
         while(resultSet.next()){
-            words.add(resultSet.getString("Word"));
+                words.add(resultSet.getString("Word"));
+
+        }
+            resultSet.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         if(words.size()!=numOfWords){
             return null;
         }
+
         else return words;
     }
 
@@ -67,10 +83,18 @@ public class DatabaseHelper extends DataBase {
      * @throws SQLException throw exception if any error when face any error in query step
      */
 
-    public String getViMeaning(String word) throws SQLException {
-        String sql = "SELECT Meaning FROM Dictionary WHERE Word = '"+word+"'";
+    public String getViMeaning(String word){
+        String sql = "SELECT Meaning FROM Dictionary " +
+                "WHERE Word = '"+word+"'";
         ResultSet resultSet = super.query(sql);
-        return resultSet.getString("Meaning");
+        try {
+             String meaning = resultSet.getString("Meaning");
+             resultSet.close();
+             return meaning;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**
@@ -81,23 +105,41 @@ public class DatabaseHelper extends DataBase {
      * @throws SQLException throw exception if any error when face any error in query step
      */
 
-    public String getEnMeaning(String word) throws SQLException {
-        String sql = "SELECT Word FROM Dictionary WHRERE Meaning = "+word;
+    public String getEnMeaning(String word) {
+        String sql = "SELECT Word FROM Dictionary " +
+                "WHRERE Meaning = "+word;
         ResultSet resultSet = super.query(sql);
-        return resultSet.getString("Word");
+        try {
+            String meaning = resultSet.getString("Word");
+            resultSet.close();
+            return meaning;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
-    public String getDecription(String word) throws SQLException {
-        String sql = "SELECT Decription FROM Dictionary WHERE Word = '"+word+"'";
+    public String getDecription(String word) {
+        String sql = "SELECT Decription FROM Dictionary " +
+                "WHERE Word = '"+word+"'";
         ResultSet resultSet = super.query(sql);
-        return resultSet.getString("Decription");
-
+        try {
+            String meaning = resultSet.getString("Decription");
+            resultSet.close();
+            return meaning;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public String getImage(String word){
-        String sql="SELECT Image FROM Dictionary WHERE word ='"+word+"'";
+        String sql="SELECT Image FROM Dictionary " +
+                "WHERE Word ='"+word+"'";
         ResultSet resultSet = super.query(sql);
         try {
-            return resultSet.getString("Image");
+            String fileName = resultSet.getString("Image");
+            resultSet.close();
+            return fileName;
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -105,25 +147,49 @@ public class DatabaseHelper extends DataBase {
     }
 
     public void deleteWord(String word,String topic){
-        String sql = "DELETE FROM Dictionary WHERE word = '"+word+"' AND Topic = '"+topic+"'";
+        String sql = "DELETE FROM Dictionary " +
+                "WHERE word = '"+word+"' AND Topic = '"+topic+"'";
         super.insert(sql);
     }
 
     public void deleteTopic(String topic){
-        String sql ="DELETE FROM Dictionary WHERE Topic ='"+topic+"'";
+        String sql ="DELETE FROM Dictionary " +
+                "WHERE Topic ='"+topic+"'";
         super.insert(sql);
     }
-    public ArrayList<String> getWordByTopic(String topic) throws SQLException {
+    public ArrayList<String> getWordByTopic(String topic) {
         ArrayList<String> words = new ArrayList<>();
-        String sql = "SELECT Word FROM Dictionary WHERE Topic ='"+topic+"'";
+        String sql = "SELECT Word FROM Dictionary " +
+                "WHERE Topic ='"+topic+"'";
         ResultSet resultSet = super.query(sql);
-        while (resultSet.next()){
-            words.add(resultSet.getString("Word"));
+        try {
+            while (resultSet.next()){
+                words.add(resultSet.getString("Word"));
+            }
+            resultSet.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return words;
     }
 
-
+    public ArrayList<String> getRandomWords(int numOfWords, String except){
+        ArrayList<String> words = new ArrayList<>();
+        String sql = "SELECT Word FROM Dictionary " +
+                "WHERE Word NOT LIKE '"+except+"' "+
+                "ORDER BY RANDOM() " +
+                "LIMIT "+numOfWords;
+        ResultSet resultSet = super.query(sql);
+        try {
+            while (resultSet.next()){
+                words.add(resultSet.getString("Word"));
+            }
+            resultSet.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return words;
+    }
     public void updateWord(String word, String meaning, String topic, String note) {
         String sql = "UPDATE Dictionary SET " +
                 "Meaning = '"+meaning+"', "+
@@ -141,6 +207,7 @@ public class DatabaseHelper extends DataBase {
                 sql = "UPDATE Dictionary SET Priority = Priority - 1 WHERE word = '" + word + "'";
                 super.insert(sql);
             }
+            resultSet.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -155,6 +222,7 @@ public class DatabaseHelper extends DataBase {
                 sql = "UPDATE Dictionary SET Priority = Priority + 1 WHERE word = '" + word + "'";
                 super.insert(sql);
             }
+            resultSet.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -193,21 +261,25 @@ public class DatabaseHelper extends DataBase {
         }
     }
 
-    public void writeRecord(File file,ArrayList<String> topics) throws SQLException {
+    public void writeRecord(File file,ArrayList<String> topics){
         String sql = "SELECT Word, Meaning, Image, Topic, Decription FROM Dictionary";
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("Word, Meaning, Image, Topic, Decription\n");
         for(String topic:topics) {
             ResultSet resultSet = super.query(sql);
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(file.getPath()))) {
-                while (resultSet.next()) {
-                    if(resultSet.getString("Topic").equals(topic)) {
-                        stringBuilder.append(resultSet.getString("Word") + ",");
-                        stringBuilder.append(resultSet.getString("Meaning") + ",");
-                        stringBuilder.append(resultSet.getString("Image") + ",");
-                        stringBuilder.append(resultSet.getString("Topic") + ",");
-                        stringBuilder.append(resultSet.getString("Decription") + "\n");
+                try {
+                    while (resultSet.next()) {
+                        if(resultSet.getString("Topic").equals(topic)) {
+                            stringBuilder.append(resultSet.getString("Word") + ",");
+                            stringBuilder.append(resultSet.getString("Meaning") + ",");
+                            stringBuilder.append(resultSet.getString("Image") + ",");
+                            stringBuilder.append(resultSet.getString("Topic") + ",");
+                            stringBuilder.append(resultSet.getString("Decription") + "\n");
+                        }
                     }
+                } catch (SQLException e) {
+                    e.printStackTrace();
                 }
                 writer.write(stringBuilder.toString());
             } catch (IOException e) {
@@ -220,6 +292,6 @@ public class DatabaseHelper extends DataBase {
      */
     public static void main(String[] args) throws SQLException {
         DatabaseHelper db= new DatabaseHelper();
-        db.decreasePriority("word4");
+            db.increasePriority("bus ");
     }
 }

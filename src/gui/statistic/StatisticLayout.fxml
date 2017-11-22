@@ -44,7 +44,7 @@
                   <Font name="System Bold" size="15.0" />
                </font>
             </Text>
-            <Text fill="WHITE" layoutX="508.0" layoutY="55.0" strokeType="OUTSIDE" strokeWidth="0.0" text="14" wrappingWidth="72.000015437603">
+            <Text fill="WHITE" layoutX="508.0" layoutY="55.0" strokeType="OUTSIDE" strokeWidth="0.0" text="2" wrappingWidth="72.000015437603">
                <font>
                   <Font name="System Bold" size="15.0" />
                </font>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.jfoenix.controls.JFXCheckBox?>
+<?import com.jfoenix.controls.JFXRadioButton?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -9,18 +9,27 @@
 
 <AnchorPane prefHeight="416.0" prefWidth="722.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.learning.Question.Type1">
    <children>
-      <Text layoutX="47.0" layoutY="56.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Chọn nghĩa tương ứng với hình sau:" wrappingWidth="583.826171875">
+      <Text fx:id="question" layoutX="75.0" layoutY="56.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Chọn nghĩa tương ứng với hình sau:" wrappingWidth="583.826171875">
          <font>
             <Font name="System Bold" size="18.0" />
          </font>
       </Text>
-      <ImageView fitHeight="150.0" fitWidth="226.0" layoutX="226.0" layoutY="90.0" pickOnBounds="true">
+      <ImageView fx:id="wordImage" fitHeight="150.0" fitWidth="226.0" layoutX="237.0" layoutY="90.0" pickOnBounds="true">
          <image>
-            <Image url="@../../../../../../Pictures/S1.png" />
+            <Image url="@../../../Resource/WordPicture/apple.jpg" />
          </image>
       </ImageView>
-      <JFXCheckBox layoutX="92.0" layoutY="333.0" prefHeight="20.0" prefWidth="145.0" />
-      <JFXCheckBox layoutX="275.0" layoutY="333.0" prefHeight="20.0" prefWidth="145.0" />
-      <JFXCheckBox layoutX="462.0" layoutY="333.0" prefHeight="20.0" prefWidth="145.0" />
+      <JFXRadioButton fx:id="answerA" layoutX="91.0" layoutY="337.0">
+         <font>
+            <Font name="System Bold" size="14.0" />
+         </font></JFXRadioButton>
+      <JFXRadioButton fx:id="answerB" layoutX="304.0" layoutY="337.0">
+         <font>
+            <Font name="System Bold" size="14.0" />
+         </font></JFXRadioButton>
+      <JFXRadioButton fx:id="answerC" layoutX="496.0" layoutY="338.0">
+         <font>
+            <Font name="System Bold" size="14.0" />
+         </font></JFXRadioButton>
    </children>
 </AnchorPane>

@@ -20,6 +20,7 @@ public class DataBaseHelper extends DataBase{
         while(resultSet.next()){
             dates.add(resultSet.getDate("Date"));
         }
+        resultSet.close();
         return dates;
     }
     public ArrayList<Integer> getAllReviewedScore() throws SQLException {
@@ -29,6 +30,7 @@ public class DataBaseHelper extends DataBase{
         while (resultSet.next()){
             reviewedScores.add(resultSet.getInt("Reviewed"));
         }
+        resultSet.close();
         return reviewedScores;
     }
     public ArrayList<Integer> getAllNewWordScore() throws SQLException {
@@ -38,17 +40,34 @@ public class DataBaseHelper extends DataBase{
         while(resultSet.next()){
             newWordScores.add(resultSet.getInt("NewWord"));
         }
+        resultSet.close();
         return newWordScores;
     }
-    public void ImportNewRecord(int reviewedScore, int newWordScore){
+    public boolean isToday(){
         Long now =Calendar.getInstance().getTimeInMillis();
-        String sql = "INSERT INTO user (Date,Reviewed,NewWord) VALUES ("+now+','+reviewedScore+','+newWordScore+")";
+        now = now - now%86400000;
+        String sql="SELECT Reviewed FROM user WHERE Date= "+now+"";
+        ResultSet resultSet = super.query(sql);
+
+        try {
+            boolean b = resultSet.next();
+            resultSet.close();
+            return b;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    public void importNewRecord(int reviewedScore, int newWordScore){
+        Long now =Calendar.getInstance().getTimeInMillis();
+        now = now - now%86400000;
+        String sql = "INSERT INTO user (Date,Reviewed,NewWord) VALUES ("+now+","+reviewedScore+','+newWordScore+")";
         super.insert(sql);
     }
     public static void main(String[] args) throws SQLException {
         DataBaseHelper dataBaseHelper = new DataBaseHelper();
-
-      //  System.out.println(i);
+        dataBaseHelper.importNewRecord(3,3);
+        System.out.println(dataBaseHelper.isToday());
 
     }
 }

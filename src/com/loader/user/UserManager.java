@@ -9,15 +9,24 @@ import java.util.Date;
  * Created by GUNGUI on 10/18/2017.
  */
 public class UserManager {
+    static UserManager userManager = new UserManager();
     static DataBaseHelper db;
     static ArrayList<UserRecord> records;
 
-    public UserManager() throws SQLException {
+    private UserManager() {
         records  = new ArrayList<>();
         db = new DataBaseHelper();
-        ArrayList<java.sql.Date> allDate = db.getAllDate();
-        ArrayList<Integer> reviewedScore =db.getAllReviewedScore();
-        ArrayList<Integer> newWordScore = db.getAllNewWordScore();
+        ArrayList<java.sql.Date> allDate = null;
+        ArrayList<Integer> reviewedScore = null;
+        ArrayList<Integer> newWordScore = null;
+        try {
+           allDate = db.getAllDate();
+           reviewedScore =db.getAllReviewedScore();
+           newWordScore = db.getAllNewWordScore();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
         for(int i=0;i<allDate.size();i++){
             UserRecord userRecord = new UserRecord(allDate.get(i),reviewedScore.get(i),newWordScore.get(i));
             records.add(userRecord);
@@ -26,8 +35,11 @@ public class UserManager {
     public static ArrayList<UserRecord> getRecords(){
         return records;
     }
+    public static boolean doneToday(){
+        return db.isToday();
+    }
     public static void insertNewRecord(int reviewedScore,int newWordScore){
-        db.ImportNewRecord(reviewedScore,newWordScore);
+        db.importNewRecord(reviewedScore,newWordScore);
     }
 
     /**
@@ -60,14 +72,9 @@ public class UserManager {
     /**
      * test
      * @param args
-     * @throws SQLException
      */
-    public static void main(String[] args) throws SQLException {
-        UserManager userManager = new UserManager();
-        userManager.insertNewRecord(99,99);
-        for(UserRecord i:userManager.getRecords()){
-            System.out.println(i.getDate()+i.getNewWord()+i.getReviewed());
-        }
+    public static void main(String[] args) {
+
 
     }
 }

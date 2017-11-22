@@ -1,10 +1,10 @@
 package gui;
 
 import com.jfoenix.controls.JFXTabPane;
+import com.loader.user.UserManager;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.control.Tab;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -38,8 +38,12 @@ public class MenuBarController implements Initializable {
             dictionaryTab.setGraphic(loadIcon("dictionary"));
             statisticTab.setGraphic(loadIcon("statistic"));
             learningTab.setGraphic(loadIcon("learning"));
-
-            learningTab.setContent( FXMLLoader.load(this.getClass().getResource("learning/LearningLayout.fxml")));
+            if(!UserManager.doneToday()) {
+                learningTab.setContent(FXMLLoader.load(this.getClass().getResource("learning/LearningLayout.fxml")));
+            }
+            else {
+                learningTab.setContent(FXMLLoader.load(this.getClass().getResource("learning/Done.fxml")));
+            }
             statisticTab.setContent( FXMLLoader.load(this.getClass().getResource("statistic/StatisticLayout.fxml")));
             dictionaryTab.setContent( FXMLLoader.load(this.getClass().getResource("dictionary/ListLayout.fxml")));
         } catch (IOException e) {

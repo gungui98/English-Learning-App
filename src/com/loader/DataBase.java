@@ -52,6 +52,7 @@ public class DataBase {
             throw new IllegalArgumentException("SQL query must't be null");
         }
         try{
+
            statement.executeUpdate(sql);
 
         } catch (Exception e){

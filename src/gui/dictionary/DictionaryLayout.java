@@ -5,6 +5,7 @@ import com.loader.word.WordManager;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
@@ -16,6 +17,7 @@ import javafx.stage.Stage;
 
 import com.loader.word.WordManager.Word;
 
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
@@ -82,7 +84,14 @@ public class DictionaryLayout implements Initializable {
 
         WordManager.deleteWord(eng.getText(),Topic.getName());
 
-            WordManager.reload();
+    }
+    private void loadImage(String word){
+        if (word!=null) {
+            WordManager.getImageDir(word);
+            InputStream png = getClass().getResourceAsStream(WordManager.getImageDir(word));
+            Image image = new Image(png);
+            wordImage.setImage(image);
+        }
 
     }
     private void update(){
@@ -92,6 +101,8 @@ public class DictionaryLayout implements Initializable {
         WordManager.updateWord(eng.getText(),vi.getText(),Topic.getName(),decrip.getText());
     }
     private void initContent(String english,String vietnamese,String decription){
+        //init Image
+        loadImage(english);
         //init button
         saveButton.setDisable(true);
         deleteButton.setOnMouseClicked(event -> confirmDialog("delete"));

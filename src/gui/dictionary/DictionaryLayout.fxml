@@ -20,7 +20,7 @@
       </ImageView>
       <ImageView fx:id="wordImage" fitHeight="167.0" fitWidth="284.0" layoutX="265.0" layoutY="29.0" pickOnBounds="true">
          <image>
-            <Image url="@../logo.png" />
+            <Image url="@../../Resource/Images/no_image.jpeg" />
          </image>
       </ImageView>
       <JFXButton fx:id="addButton" layoutX="249.0" layoutY="357.0" style="-fx-background-color: #4caf50;" text="Thêm" />
